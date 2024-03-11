@@ -4,41 +4,49 @@ import card.Value;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Dealer {
-    private List<Card> cardDeck = new ArrayList<>();
+    private LinkedList<Card> cardDeck = new LinkedList<>();
 
     private List<Card> dealerCards;
 
 
     public Dealer() {
 
+
+    }
+    public void initialize() {
         List<Value> values = new ArrayList<>(List.of(Value.values()));
         List<Symbol> symbols = new ArrayList<>(List.of(Symbol.values()));
 
-        for (int i = 0; i < symbols.size(); i++) {
-            for (int j = 0; j < values.size(); j++) {
-                cardDeck.add(new Card(symbols.get(i),values.get(j)));
-
+        for (Symbol symbol : symbols) {
+            for (Value value : values) {
+                cardDeck.add(new Card(symbol, value));
             }
+        }
+        this.shuffle();
+    }
+
+    public void giveStartCards(List<Player> playerList){
+        for (Player player : playerList) {
+            giveCard(player);
+            giveCard(player);
+            // dealerCards.add
         }
     }
 
-    private void giveStartCards(List<Player> playerList){
-        for (int i = 0; i < playerList.size(); i++) {
-            Card currentCard = cardDeck.get(i);
-            Player currentPlayer = playerList.get(i);
-            currentPlayer.getPlayerCards().add(currentCard);
-            cardDeck.remove(currentCard);
-
-           // dealerCards.add
-        }
+    private void giveCard(Player player) {
+        Card currentCard = cardDeck.poll();
+        player.getPlayerCards().add(currentCard);
     }
 
 
     public void shuffle(){
-        Collections.shuffle(cardDeck);
+        List<Card> cards = new ArrayList<>(cardDeck);
+        Collections.shuffle(cards);
+        this.cardDeck = new LinkedList<>(cards);
     }
 
     public List<Card> getCardDeck() {
