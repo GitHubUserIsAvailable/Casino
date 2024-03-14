@@ -3,20 +3,21 @@ package horseRacing;
 import javax.naming.Name;
 
 public class Player {
-    private Double money;
+    private int cash;
+
     private String name;
 
-    public Player(Double money, String name) {
-        this.money = money;
+    public Player(String name) {
+        this.cash = 1000;
         this.name = name;
     }
 
-    public Double getMoney() {
-        return money;
+    public int getCash() {
+        return cash;
     }
 
-    public void setMoney(Double money) {
-        this.money = money;
+    public void setCash(int cash) {
+        this.cash = cash;
     }
 
     public String getName() {
@@ -26,4 +27,5 @@ public class Player {
     public void setName(String name) {
         this.name = name;
     }
+
 }

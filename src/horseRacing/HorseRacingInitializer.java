@@ -17,6 +17,8 @@ public class HorseRacingInitializer {
     }
 
 
+
+
     public static double[] shuffleArray(double[] array) {
         Random rnd = new Random();
         for (int i = array.length - 1; i > 0; i--) {

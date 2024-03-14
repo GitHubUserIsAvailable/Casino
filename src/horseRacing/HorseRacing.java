@@ -1,35 +1,65 @@
+package horseRacing;
+
 import horseRacing.Horse;
 import horseRacing.HorseRacingEvaluator;
 import horseRacing.HorseRacingInitializer;
 
+import javax.xml.namespace.QName;
 import java.util.List;
 import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
+public class HorseRacing {
+
     private static final Scanner scanner = new Scanner(System.in);
+
+    private static int antwortWetten;
+
+
+
+
+    static Player player1 = new Player("Saschalein");
 
     public static void wetten() {
 
 
-        boolean validInput = false;
+        boolean validHorseInput = false;
 
-        while (!validInput) {
+
+
+        while (!validHorseInput) {
             System.out.println("Auf welches Pferd möchtest du wetten?");
-            int antwortWetten = Integer.parseInt(scanner.nextLine());
-            if (antwortWetten < 8) {
-                validInput = true;
+            antwortWetten = Integer.parseInt(scanner.nextLine());
+            if (antwortWetten < 9) {
+                validHorseInput = true;
                 System.out.println("Sie haben auf Pferd " +antwortWetten+ " gewettet");
             } else {
                 System.out.println("Du kannst nur auf die Pferde 1 bis 8 wetten!");
             }
         }
 
+        boolean validBetInput = false;
+
+       while(!validBetInput){
+           System.out.println("Balance:" + player1.getCash());
+           System.out.println("Ihr Wetteinsatz:");
+           int antwortWettbetrag = Integer.parseInt(scanner.nextLine());
+           if (player1.getCash() >= antwortWettbetrag){
+               System.out.println("Sie haben" + antwortWettbetrag + "auf" + antwortWetten + "gesetzt");
+               validBetInput = true;
+           } else {
+               System.out.println("\u001B[31m" + "Du bist zu arm dafür!" + "\u001B[0m");
+
+
+           }
+
+       }
+
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         String green = "\u001B[32m";
         String reset = "\u001B[0m";
@@ -59,7 +89,7 @@ public class Main {
             evaluate = horseRacingEvaluator.evaluate(horses);
 
             if (evaluate) {
-                scanner.nextLine();
+                Thread.sleep(1000);
                 System.out.println("--------------------------------------------------");
                 for (Horse horse : horses) {
                     if (horse.isStepWinner()){
@@ -75,7 +105,18 @@ public class Main {
             }
 
         }
-        System.out.println("Das Pferd mit der Nummer " + HorseRacingEvaluator.winningHorse.getId() + " hat gewonnen.");
+        if (HorseRacingEvaluator.winningHorse.getId() == antwortWetten){
+            System.out.println(green + "Ihr Pferd hat das Rennen gewonnen!" + green);
+        }
+        else {
+            System.out.println("Das Pferd mit der Nummer " + HorseRacingEvaluator.winningHorse.getId() + " hat gewonnen.");
+            System.out.println("\u001B[31m" + "Sie haben verloren!" + "\u001B[0m");
+        }
+
+
+        for (Horse horse : horses){
+            System.out.println(horse.getId());
+        }
 
     }
 }
