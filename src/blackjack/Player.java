@@ -1,6 +1,7 @@
 package blackjack;
 
 import blackjack.card.Card;
+import blackjack.card.CardValuePair;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,39 +29,53 @@ public class Player {
         return input <= amount;
     }
 
-    public void checkCommand(List<Card> hand) {
+    public boolean checkCommand(List<Card> hand, List<Card> hand2) {
         String command = Blackjack.getCommand();
         switch (command) {
 
-            case "take card" -> takeCard(hand);
+            case "take card" -> {
+                return takeCard(hand);
+            }
 
-            case "stand" -> stand();
+            case "stand" -> {
+                return stand();
+            }
 
-            case "double" -> doubleUp(Blackjack.dealer);
+            case "double" -> {
+                return doubleUp(Blackjack.dealer, hand);
+            }
 
-            case "split" -> splitUp(Blackjack.dealer, hand);
+            case "split" -> {
+                return splitUp(Blackjack.dealer, hand, hand2);
+            }
         }
+        return false;
     }
 
-    private void takeCard(List<Card> hand) {
+    private boolean takeCard(List<Card> hand) {
         Blackjack.dealer.giveCardToPlayer(this, hand);
+        return true;
     }
 
-    private void stand() {
+    private boolean stand() {
+        System.out.println("Cards Dealer: " + List.of(Blackjack.dealer.getDealerCards().get(0).toString(false) + Blackjack.dealer.getDealerCards().get(1).toString(false)));
+        return true;
     }
 
-    private void doubleUp(Dealer dealer) {
+    private boolean doubleUp(Dealer dealer, List<Card> hand) {
         if (dealer.getCollectedAmount() > amount) {
             System.out.println("Zu wenig Geld zum Doppeln!");
-            return;
+            return false;
         }
         dealer.setCollectedAmount(dealer.getCollectedAmount() * 2);
         setAmount(amount - dealer.getCollectedAmount() / 2);
-        //Blackjack.dealer.giveCardToPlayer(this);
+        Blackjack.dealer.giveCardToPlayer(this, hand);
         stand();
+        return true;
+
     }
 
-    private void splitUp(Dealer dealer, List<Card> hand) {
+    private boolean splitUp(Dealer dealer, List<Card> hand, List<Card> hand2) {
         Card cardToCompare = null;
         Iterator<Card> iterator1 = hand.iterator();
         while (iterator1.hasNext()) {
@@ -71,18 +86,44 @@ public class Player {
                 if (cardToCompare.getValue() == card.getValue()) {
                     if (dealer.getCollectedAmount() > amount) {
                         System.out.println("zu wenig Geld zum Splitten!");
+                        return false;
                     } else {
-                        playerCardsHand2.add(cardToCompare);
+                        hand2.add(cardToCompare);
                         hand.remove(cardToCompare);
                         Blackjack.dealer.giveCardToPlayer(this, hand);
-                        Blackjack.dealer.giveCardToPlayer(this, playerCardsHand2);
+                        Blackjack.dealer.giveCardToPlayer(this, hand2);
                         System.out.println("TESTWEISE:------------- SPLIT ERFOLGREICH -------------"); // TEST; REMOVE LINE -----------
                     }
                 } else {
                     System.out.println("Zum splitten müssen beide Karten gleich sein!");
+                    return false;
                 }
             }
         }
+        return true;
+    }
+
+    public int checkHandValue(List<Card> hand) {
+        int cardValue = 0;
+        int cardSecondValue = 0;
+        for (int i = 0; i < hand.size(); i++) {
+            if (hand.get(i).getValue().getCardValuePair().getSecondValue().isEmpty()) {
+                cardValue = cardValue + hand.get(i).getValue().getCardValuePair().getValue();
+            } else {
+                cardSecondValue = cardSecondValue + hand.get(i).getValue().getCardValuePair().getSecondValue().get();
+            }
+        }
+        if (cardValue > 21) {
+            if (!(cardSecondValue == 0)) {
+                for (int i = 0; i < cardSecondValue; i++) {
+                    cardValue = -11;
+                    cardSecondValue--;
+                }
+            } else {
+                System.exit(0);
+            }
+        }
+        return cardValue;
     }
 
     public List<Card> getPlayerCardsHand1() {

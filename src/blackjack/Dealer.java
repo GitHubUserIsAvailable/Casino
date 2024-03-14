@@ -36,10 +36,10 @@ public class Dealer {
 
 
     public void giveCardToPlayer(Player player, List<Card> Cards) {
-        //Card currentCard = cardDeck.poll();
-        //Cards.add(currentCard);
-        Card fixCard = cardDeck.get(Value.KING.ordinal());
-        Cards.add(fixCard);
+        Card currentCard = cardDeck.poll();
+        Cards.add(currentCard);
+        //Card fixCard = cardDeck.get(Value.KING.ordinal());
+        //Cards.add(fixCard);
 
     }
 
