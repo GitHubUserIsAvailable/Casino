@@ -1,4 +1,4 @@
-package card;
+package blackjack.card;
 
 import java.util.Optional;
 

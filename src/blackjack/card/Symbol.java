@@ -1,4 +1,4 @@
-package card;
+package blackjack.card;
 
 public enum Symbol {
     HEART,
