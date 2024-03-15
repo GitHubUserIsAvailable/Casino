@@ -21,14 +21,26 @@ public class Blackjack {
         Player player = new Player(scanner.nextLine());
         System.out.println("INFO: '" + player.getName() + "' wurde als Name gesetzt!");
         System.out.println("----------------------------------------------");
-        System.out.println("Verfügbares Geld: " + player.getAmount());
-        System.out.println("----------------------------------------------");
-        System.out.println("Dein Wetteinsatz:");
-        int input = Integer.parseInt(scanner.nextLine());
-        boolean checkedAmount = false;
-        while (!checkedAmount) {
-            checkedAmount = player.checkAmount(input);
-            if (checkedAmount) {
+        playRound(player);
+    }
+
+    private static void playRound(Player player) {
+        System.out.println("Möchtest du eine weiter runde Spielen? (yes/no)");
+        String playRound = scanner.nextLine();
+        dealer.initialize();
+        player.getPlayerCardsHand1().clear();
+        player.getPlayerCardsHand2().clear();
+        player.getPlayerCardsHand3().clear();
+        player.getPlayerCardsHand4().clear();
+        dealer.getDealerCards().clear();
+        dealer.setCollectedAmount(0);
+        if (playRound.equals("yes") || playRound.equals("y")) {
+            System.out.println("Verfügbares Geld: " + player.getAmount());
+            System.out.println("Wie viel Geld setzt du?");
+            int input = Integer.parseInt(scanner.nextLine());
+            boolean checkedAmount = false;
+            if (!checkedAmount) {
+                checkedAmount = player.checkAmount(input);
                 dealer.setCollectedAmount(input);
                 player.setAmount(player.getAmount() - input);
                 System.out.println("----------------------------------------------");
@@ -43,21 +55,18 @@ public class Blackjack {
                 System.out.println("Folgende Befehle sind verfügbar: take card, stand, double, split");
                 System.out.println("Gebe deinen Befehl ein: ");
                 command = scanner.nextLine();
-
-                boolean checkedCommand = player.checkCommand(player.getPlayerCardsHand1(), player.getPlayerCardsHand2());
-                if (checkedCommand && command.equals("split")) {
-                    splitGame(player, player.getPlayerCardsHand1(), player.getPlayerCardsHand2());
-                } else {
-                    gameLoop(player);
-                }
-
-            } else {
-                System.out.println("So viel Geld hast du nicht!");
-                System.out.println("Verfügbares Geld: " + player.getAmount());
-                System.out.println("Gebe deinen Wetteinsatz ein: ");
-                input = Integer.parseInt(scanner.nextLine());
             }
+            boolean checkedCommand = player.checkCommand(player.getPlayerCardsHand1(), player.getPlayerCardsHand2());
+            if (checkedCommand && command.equals("split")) {
+                splitGame(player, player.getPlayerCardsHand1(), player.getPlayerCardsHand2());
+            } else {
+                gameLoop(player);
+            }
+
+        }else {
+            System.exit(0);
         }
+
     }
 
     public static void checkForWinner(int playerHandValue, int dealerHandValue, Player player) {
@@ -73,40 +82,44 @@ public class Blackjack {
         if (playerHandValue == 21) {
             System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
             System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
-            System.out.println("Du hast 21, BLACKJACK! --- Du hast diese Runde gewonnen!---");
-            System.exit(0);
+            System.out.println("Du hast 21, BLACKJACK! Du gewinnst: " + dealer.getCollectedAmount() * 1.4);
+            player.setAmount((int) ((int) player.getAmount() + (dealer.getCollectedAmount() * 1.4)));
+            System.out.println("");
+            playRound(player);
         } else if (playerHandValue < 21) {
             if (dealerHandValue > 21) {
                 System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
-                System.out.println("Der Dealer hat überkauft! Du gewinnst!");
-                System.exit(0);
+                System.out.println("Der Dealer hat überkauft! Du gewinnst: " + dealer.getCollectedAmount() * 1.4);
+                player.setAmount((int) ((int) player.getAmount() + (dealer.getCollectedAmount() * 1.4)));
+                playRound(player);
             } else if (dealerHandValue == 21) {
                 System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
-                System.out.println("Der Dealer hat 21! Du verlierst!");
-                System.exit(0);
+                System.out.println("Der Dealer hat 21! Du verlierst: " + dealer.getCollectedAmount());
+                playRound(player);
             } else {
                 if (playerPointsAway < dealerPointsAway) {
                     System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
                     System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
-                    System.out.println("Du bist " + playerPointsAway + " Punkte entfernt von 21. Du gewinnst!");
-                    System.exit(0);
+                    System.out.println("Du bist " + playerPointsAway + " Punkte entfernt von 21. Du gewinnst: " + dealer.getCollectedAmount() * 1.4);
+                    player.setAmount((int) ((int) player.getAmount() + (dealer.getCollectedAmount() * 1.4)));
+                    playRound(player);
                 } else if (playerPointsAway > dealerPointsAway) {
                     System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
                     System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
-                    System.out.println("Der Dealer ist " + dealerPointsAway + " Punkte entfernt von 21. Du verlierst!");
-                    System.exit(0);
+                    System.out.println("Der Dealer ist " + dealerPointsAway + " Punkte entfernt von 21. Du verlierst: " + dealer.getCollectedAmount());
+                    playRound(player);
                 } else {
                     System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
                     System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
                     System.out.println("Es ist ein Unentschieden! Die Runde endet in einem Push.");
-                    System.exit(0);
+                    player.setAmount(player.getAmount() + dealer.getCollectedAmount());
+                    playRound(player);
                 }
             }
         } else {
             System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
-            System.out.println("Deine Karten haben einen Wert in höhe von über 21! (" + handValue + ") ---Verloren---");
-
-            System.exit(0);
+            System.out.println("Deine Karten haben einen Wert in höhe von über 21! (" + handValue + ") du verlierst!");
+            playRound(player);
         }
     }
 
