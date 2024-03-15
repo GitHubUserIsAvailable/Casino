@@ -33,7 +33,11 @@ public class Player {
         String command = Blackjack.getCommand();
         switch (command) {
 
-            case "take card" -> {
+            case ("take card") -> {
+                return takeCard(hand);
+            }
+
+            case ("take") -> {
                 return takeCard(hand);
             }
 

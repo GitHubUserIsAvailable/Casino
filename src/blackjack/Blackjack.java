@@ -25,6 +25,10 @@ public class Blackjack {
     }
 
     private static void playRound(Player player) {
+        if (player.getAmount() == 0){
+            System.out.println("Du hast kein Geld mehr!");
+            System.exit(0);
+        }
         System.out.println("Möchtest du eine weiter runde Spielen? (yes/no)");
         String playRound = scanner.nextLine();
         dealer.initialize();
@@ -89,8 +93,8 @@ public class Blackjack {
         } else if (playerHandValue < 21) {
             if (dealerHandValue > 21) {
                 System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
-                System.out.println("Der Dealer hat überkauft! Du gewinnst: " + dealer.getCollectedAmount() * 1.4);
-                player.setAmount((int) ((int) player.getAmount() + (dealer.getCollectedAmount() * 1.4)));
+                System.out.println("Der Dealer hat überkauft! Du gewinnst: " + dealer.getCollectedAmount() * 1.6);
+                player.setAmount((int) ((int) player.getAmount() + (dealer.getCollectedAmount() * 1.6)));
                 playRound(player);
             } else if (dealerHandValue == 21) {
                 System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
@@ -100,8 +104,8 @@ public class Blackjack {
                 if (playerPointsAway < dealerPointsAway) {
                     System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
                     System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
-                    System.out.println("Du bist " + playerPointsAway + " Punkte entfernt von 21. Du gewinnst: " + dealer.getCollectedAmount() * 1.4);
-                    player.setAmount((int) ((int) player.getAmount() + (dealer.getCollectedAmount() * 1.4)));
+                    System.out.println("Du bist " + playerPointsAway + " Punkte entfernt von 21. Du gewinnst: " + dealer.getCollectedAmount() * 1.6);
+                    player.setAmount((int) ((int) player.getAmount() + (dealer.getCollectedAmount() * 1.6)));
                     playRound(player);
                 } else if (playerPointsAway > dealerPointsAway) {
                     System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
