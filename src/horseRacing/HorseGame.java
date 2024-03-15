@@ -71,7 +71,7 @@ public class HorseGame {
             evaluate = horseRacingEvaluator.evaluate(horses);
 
             if (evaluate) {
-                Thread.sleep(1000);
+                Thread.sleep(750);
                 System.out.println("--------------------------------------------------");
                 for (Horse horse : horses) {
                     horseDoStep(horse);

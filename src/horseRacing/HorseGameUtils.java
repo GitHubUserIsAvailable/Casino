@@ -20,7 +20,7 @@ public class HorseGameUtils {
                 );
                 if (getter.get() < minimumNumber) {
                     validHorseInput = true;
-                    System.out.println(String.format(validationSuccess, userInput));
+                    System.out.printf((validationSuccess) + "%n", userInput);
                 } else {
                     System.out.println(validationError);
                 }
