@@ -1,5 +1,4 @@
 package blackjack;
-
 import blackjack.card.Card;
 
 import java.util.Collections;
@@ -13,6 +12,7 @@ public class Blackjack {
     public static Dealer dealer = new Dealer();
     private static String command;
     private static int handValue;
+    private static int dealerHandValue;
 
     public static void main(String[] args) {
         System.out.println("----------------------------------------------");
@@ -60,12 +60,67 @@ public class Blackjack {
         }
     }
 
+    public static void checkForWinner(int playerHandValue, int dealerHandValue, Player player) {
+        handValue = playerHandValue;
+
+        while (dealerHandValue < 17) {
+            dealer.giveCardToDealer(dealer);
+            dealerHandValue = player.checkHandValue(dealer.getDealerCards());
+        }
+        int playerPointsAway = 21 - playerHandValue;
+        int dealerPointsAway = 21 - dealerHandValue;
+
+        if (playerHandValue == 21) {
+            System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
+            System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
+            System.out.println("Du hast 21, BLACKJACK! --- Du hast diese Runde gewonnen!---");
+            System.exit(0);
+        } else if (playerHandValue < 21) {
+            if (dealerHandValue > 21) {
+                System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
+                System.out.println("Der Dealer hat überkauft! Du gewinnst!");
+                System.exit(0);
+            } else if (dealerHandValue == 21) {
+                System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
+                System.out.println("Der Dealer hat 21! Du verlierst!");
+                System.exit(0);
+            } else {
+                if (playerPointsAway < dealerPointsAway) {
+                    System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
+                    System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
+                    System.out.println("Du bist " + playerPointsAway + " Punkte entfernt von 21. Du gewinnst!");
+                    System.exit(0);
+                } else if (playerPointsAway > dealerPointsAway) {
+                    System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
+                    System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
+                    System.out.println("Der Dealer ist " + dealerPointsAway + " Punkte entfernt von 21. Du verlierst!");
+                    System.exit(0);
+                } else {
+                    System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
+                    System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
+                    System.out.println("Es ist ein Unentschieden! Die Runde endet in einem Push.");
+                    System.exit(0);
+                }
+            }
+        } else {
+            System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
+            System.out.println("Deine Karten haben einen Wert in höhe von über 21! (" + handValue + ") ---Verloren---");
+
+            System.exit(0);
+        }
+    }
+
+
     private static void gameLoop(Player player) {
         for (int i = 0; i < 20; i++) {
             handValue = player.checkHandValue(player.getPlayerCardsHand1());
+            dealerHandValue = player.checkHandValue((dealer.getDealerCards()));
+            if (handValue > 21) {
+                checkForWinner(handValue, dealerHandValue, player);
+            }
             System.out.println("----------------------------------------------");
             System.out.println("Cards " + player.getName() + " " + player.getPlayerCardsHand1().stream().map(card -> card.toString(false)).toList());
-            System.out.println("Cards Dealer: " + List.of(dealer.getDealerCards().get(0).toString(false) + dealer.getDealerCards().get(1).toString(true)));
+            System.out.println("Cards Dealer: " + dealer.getDealerCards().stream().map(card -> card.toString(false)).toList());
             System.out.println("Gesetzt: " + dealer.getCollectedAmount());
             System.out.println("Verfügbares Geld: " + player.getAmount());
             System.out.println("Deine Karten haben einen Wert in höhe von: " + handValue);

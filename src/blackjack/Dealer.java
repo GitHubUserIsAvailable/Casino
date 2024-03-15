@@ -43,7 +43,7 @@ public class Dealer {
 
     }
 
-    private void giveCardToDealer(Dealer dealer) {
+    public void giveCardToDealer(Dealer dealer) {
         Card currentCard = cardDeck.poll();
         dealer.getDealerCards().add(currentCard);
     }

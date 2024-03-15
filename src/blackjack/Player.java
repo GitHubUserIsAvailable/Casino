@@ -58,6 +58,9 @@ public class Player {
     }
 
     private boolean stand() {
+        int handValue = checkHandValue(getPlayerCardsHand1());
+        int dealerHandValue = checkHandValue(Blackjack.dealer.getDealerCards());
+        Blackjack.checkForWinner(handValue, dealerHandValue, this);
         System.out.println("Cards Dealer: " + List.of(Blackjack.dealer.getDealerCards().get(0).toString(false) + Blackjack.dealer.getDealerCards().get(1).toString(false)));
         return true;
     }
@@ -92,7 +95,6 @@ public class Player {
                         hand.remove(cardToCompare);
                         Blackjack.dealer.giveCardToPlayer(this, hand);
                         Blackjack.dealer.giveCardToPlayer(this, hand2);
-                        System.out.println("TESTWEISE:------------- SPLIT ERFOLGREICH -------------"); // TEST; REMOVE LINE -----------
                     }
                 } else {
                     System.out.println("Zum splitten müssen beide Karten gleich sein!");
@@ -110,21 +112,25 @@ public class Player {
             if (hand.get(i).getValue().getCardValuePair().getSecondValue().isEmpty()) {
                 cardValue = cardValue + hand.get(i).getValue().getCardValuePair().getValue();
             } else {
+                cardValue = cardValue + hand.get(i).getValue().getCardValuePair().getValue();
                 cardSecondValue = cardSecondValue + hand.get(i).getValue().getCardValuePair().getSecondValue().get();
             }
         }
         if (cardValue > 21) {
             if (!(cardSecondValue == 0)) {
                 for (int i = 0; i < cardSecondValue; i++) {
-                    cardValue = -11;
+                    cardValue = cardValue - 10;
                     cardSecondValue--;
                 }
             } else {
-                System.exit(0);
+                return cardValue;
             }
+
+
         }
         return cardValue;
     }
+
 
     public List<Card> getPlayerCardsHand1() {
         return playerCardsHand1;
@@ -149,6 +155,7 @@ public class Player {
     public int getAmount() {
         return amount;
     }
+
 
     public void setAmount(int amount) {
         this.amount = amount;
